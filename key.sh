@@ -5,14 +5,20 @@ echo '============================
 		Author:Kirito
 ============================'
 cd ~
-mkdir .ssh
+rm -rf .gitconfig
+git config --global user.email "you@example.com" && git config --global user.name "Your Name"
+ssh-keygen -t rsa -C "github"
 cd .ssh
-echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyjhmEbiU469K3lA/oUc4UK+hDkyO9B+twdlpzTe6K5hYDJbrf0XxDe5z9mlmhvbQaDOSJj185hffR3hFk1VxHU4tRHZaCxDmrOA+PLfRX0P9H2fziYPuy/AsgwZAT+vK3JGNGJm+2+WJtH8POwn1q2f4uzsNAgIAueOgyUojHSvXgrbrJ3ehMqt89Gkz4spr8DxGpMGelPqqQ8Z2aCigbt10CpoC6KYTka8TphiwYNjyKzYOc+eEeYwrve7w3RSIA8D83a1RNC7j7ueONU5AmGVQz0r7LSskdJB40CcejkWx0VT0yTaj+hsZB7wsGETwYEIVD0SPMeQe05HAiEMkN root@cn1.kirito.ml' > authorized_keys
-chmod 700 authorized_keys
-cd ../
-chmod 600 .ssh
-cd /etc/ssh/
-sed -i '/PasswordAuthentication/s/#PasswordAuthentication yes/PasswordAuthentication no/g' sshd_config
+cat <<EOF > keys.txt
 
-service sshd restart
-service ssh restart
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDI+m9tus0p/+N9+qc7bTyUWt+0HbelQJJ7dNHJ1w4ndN8Z2yX2/WCKkWZ/YsMHya34tCMVwk3KbezkjOO1TwIs81LYKIbGGYn4NQaz0ibyicwaIKOIOrsG3aSiwob6SiXxL1BYU/0/b015ZJKiyFtYuHVVEgZvrFVOqO7IHYDjIicHvjN5o6hrmW1mQOcR/V3G+hTjckg9SOrD4JGxzMl3HE43v0k5yTNdlRMSdDA3uho8ZJo8mIma1gaTCgEQ8E7soljKXBCywBaZpvrGBH97C6A4J0IY05/UkMuNk07RWVUw0zHzEOo+pPz6+19GYiSzvwZ2sy9YhEWFtRsIXgWz git@github.com
+
+EOF
+cat keys.txt >> authorized_keys
+chmod 600 authorized_keys
+rm -rf keys.txt
+cd ../
+sudo sed -i '/PasswordAuthentication/s/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+
+sudo service sshd restart
+sudo service ssh restart
